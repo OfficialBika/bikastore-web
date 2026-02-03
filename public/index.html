@@ -1,53 +1,36 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>BIKA STORE – Web Order</title>
+  <title>BIKA Store – Web Order</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="container">
-  <h1>🛍 BIKA STORE – Web Order</h1>
+  <h2>🛒 BIKA Store – Web Order</h2>
 
   <form id="orderForm">
-    <!-- Game -->
-    <label>Game</label>
+    <label>Game</label><br/>
     <select id="game" required>
       <option value="">Select Game</option>
-      <option value="MLBB">MLBB Diamonds</option>
-      <option value="PUBG">PUBG UC</option>
+      <option value="MLBB">MLBB</option>
+      <option value="PUBG">PUBG</option>
     </select>
+    <br/><br/>
 
     <!-- MLBB -->
-    <div id="mlbbFields" class="hidden">
-      <label>MLBB ID</label>
-      <input type="text" id="mlbbId" />
-
-      <label>Server ID</label>
-      <input type="text" id="mlbbServerId" />
-    </div>
+    <input id="mlbbId" placeholder="MLBB ID" /><br/>
+    <input id="mlbbServerId" placeholder="Server ID" /><br/><br/>
 
     <!-- PUBG -->
-    <div id="pubgFields" class="hidden">
-      <label>PUBG ID</label>
-      <input type="text" id="pubgId" />
-    </div>
+    <input id="pubgId" placeholder="PUBG ID" /><br/><br/>
 
-    <!-- Package -->
-    <label>Package</label>
-    <input type="text" id="packageName" placeholder="e.g. 86 Diamonds" required />
-
-    <label>Total Price (Ks)</label>
-    <input type="number" id="price" required />
+    <input id="package" placeholder="Package Name" required /><br/>
+    <input id="price" placeholder="Price (Ks)" type="number" required /><br/><br/>
 
     <button type="submit">✅ Confirm Order</button>
   </form>
 
-  <div id="result" class="hidden"></div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
