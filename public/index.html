@@ -2,57 +2,262 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BIKA Store</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>BIKA STORE — MLBB & PUBG Top-up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#6A5DE8",
+            secondary: "#00A6FF",
+            glass: "rgba(255,255,255,0.08)"
+          },
+          boxShadow: {
+            neon: "0 0 20px rgba(0,166,255,0.6)",
+            glow: "0 0 25px rgba(106,93,232,0.7)"
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background: #0A0F1F;
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
 </head>
-<body>
 
-<div class="container">
-  <h1>🛒 BIKA Store</h1>
-  <p class="sub">MLBB • PUBG • Telegram Premium</p>
+<body class="text-white">
 
-  <div class="card">
-    <label>Game</label>
-    <select id="game"></select>
-
-    <div id="mlbbFields">
-      <label>MLBB ID</label>
-      <input id="mlbbId" placeholder="Enter MLBB ID"/>
-      <label>Server ID</label>
-      <input id="mlbbServer" placeholder="Server ID"/>
+<!-- HEADER -->
+<div class="w-full p-6 bg-gradient-to-r from-primary to-secondary rounded-b-3xl shadow-glow">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">BIKA STORE</h1>
+      <p class="opacity-80">MLBB Diamonds & PUBG UC</p>
     </div>
 
-    <div id="pubgFields" style="display:none">
-      <label>PUBG ID</label>
-      <input id="pubgId" placeholder="PUBG ID"/>
+    <a href="https://t.me/BikaStoreBot"
+      class="px-4 py-2 bg-white/20 backdrop-blur-md rounded-xl shadow-neon hover:bg-white/30 transition">
+      Open Bot
+    </a>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="p-5" id="app">
+
+  <!-- STEP 1 — PRICE LIST -->
+  <div id="step1">
+    <h2 class="text-xl font-bold mt-5 mb-3">💎 MLBB Diamonds — Select Items</h2>
+
+    <div id="priceList" class="grid grid-cols-2 gap-3"></div>
+
+    <!-- CART -->
+    <h2 class="text-xl font-bold mt-6">🛒 Cart</h2>
+    <div id="cartList"></div>
+
+    <!-- MLBB ID FORM -->
+    <div class="mt-6">
+      <label class="block mb-1">MLBB ID</label>
+      <input id="mlbbId" class="w-full p-3 bg-glass rounded-xl backdrop-blur shadow-glow">
+
+      <label class="block mt-4 mb-1">Server ID</label>
+      <input id="svId" class="w-full p-3 bg-glass rounded-xl backdrop-blur shadow-glow">
     </div>
 
-    <label>Package</label>
-    <select id="package"></select>
-
-    <label>Price (Ks)</label>
-    <input id="price" disabled />
-
-    <button onclick="addOrder()">➕ Add Order</button>
+    <!-- NEXT BUTTON -->
+    <button onclick="goStep2()"
+      class="w-full mt-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl shadow-neon">
+      Confirm Order (Step 2)
+    </button>
   </div>
 
-  <div class="card">
-    <h3>🧾 Order List</h3>
-    <div id="orders"></div>
-    <div class="total">Total: <span id="total">0</span> Ks</div>
-  </div>
+  <!-- STEP 2 — PAYMENT -->
+  <div id="step2" class="hidden">
+    <h2 class="text-xl font-bold mt-5 mb-3">📄 Order Preview</h2>
+    <div id="preview" class="p-4 bg-glass rounded-xl backdrop-blur shadow-glow"></div>
 
-  <div class="card">
-    <h3>💳 Payment</h3>
-    <div>Order ID</div>
-    <input id="orderId" disabled />
-    <input type="file" id="slip"/>
-    <button onclick="submitOrder()">✅ Confirm & Upload Slip</button>
+    <h3 class="text-lg mt-6 mb-2 font-semibold">💵 Payment Methods</h3>
+
+    <div class="p-4 bg-glass rounded-xl backdrop-blur shadow-glow">
+      <p>KPay – 09xxxxxxx</p>
+      <p>WavePay – 09xxxxxxx</p>
+    </div>
+
+    <h3 class="text-lg mt-6 mb-2 font-semibold">📸 Upload Slip</h3>
+    <input id="slipInput" type="file" accept="image/*"
+      class="w-full p-3 bg-glass rounded-xl shadow-glow">
+
+    <button onclick="submitOrder()"
+      class="w-full mt-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl shadow-neon">
+      Submit Order
+    </button>
   </div>
 
 </div>
 
-<script src="script.js"></script>
+  <script>
+/* PRICE DATA */
+const prices = [
+  { amount: 11, price: 800 },
+  { amount: 22, price: 1600 },
+  { amount: 33, price: 2350 },
+  { amount: 55, price: 3600 },
+  { amount: 86, price: 4800 },
+  { amount: 112, price: 8200 },
+  { amount: 172, price: 9800 },
+  { amount: 257, price: 14500 },
+  { amount: 343, price: 20000 },
+  { amount: 429, price: 25000 },
+  { amount: 514, price: 29900 },
+  { amount: 600, price: 34500 },
+  { amount: 706, price: 39900 },
+  { amount: 792, price: 44500 },
+  { amount: 878, price: 48500 },
+  { amount: 963, price: 53000 },
+  { amount: 1049, price: 59900 },
+  { amount: 1135, price: 63500 },
+  { amount: 1412, price: 77000 },
+  { amount: 1584, price: 88000 },
+  { amount: 1669, price: 94000 },
+  { amount: 2195, price: 118900 },
+  { amount: 3158, price: 172000 },
+  { amount: 3688, price: 202000 },
+  { amount: 4390, price: 237000 },
+  { amount: 5100, price: 280000 },
+  { amount: 5532, price: 300000 },
+  { amount: 6055, price: 330000 }
+];
+
+/* CART */
+let cart = [];
+
+function renderPrices() {
+  const box = document.getElementById("priceList");
+  box.innerHTML = "";
+
+  prices.forEach((item, i) => {
+    box.innerHTML += `
+      <div class="p-3 bg-glass rounded-xl backdrop-blur shadow-glow">
+        <p class="font-semibold">${item.amount} Diamonds</p>
+        <p class="opacity-75">${item.price.toLocaleString()} Ks</p>
+        <button onclick="addToCart(${i})"
+          class="mt-2 w-full bg-gradient-to-r from-primary to-secondary py-1 rounded-xl shadow-neon">
+          + Add
+        </button>
+      </div>
+    `;
+  });
+}
+
+function addToCart(i) {
+  const item = prices[i];
+  const exists = cart.find(c => c.amount === item.amount);
+
+  if (exists) exists.qty++;
+  else cart.push({ ...item, qty: 1 });
+
+  renderCart();
+}
+
+function renderCart() {
+  const box = document.getElementById("cartList");
+  box.innerHTML = "";
+
+  cart.forEach((item, i) => {
+    box.innerHTML += `
+      <div class="p-3 bg-glass rounded-xl backdrop-blur shadow-glow mt-2">
+        <p>${item.amount} Diamonds</p>
+        <div class="flex gap-3 mt-1 items-center">
+          <button class="px-3 bg-gray-700 rounded" onclick="dec(${i})">-</button>
+          <p>${item.qty}</p>
+          <button class="px-3 bg-gray-700 rounded" onclick="inc(${i})">+</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function inc(i) {
+  cart[i].qty++;
+  renderCart();
+}
+
+function dec(i) {
+  if (cart[i].qty > 1) cart[i].qty--;
+  else cart.splice(i, 1);
+  renderCart();
+}
+
+renderPrices();
+function goStep2() {
+  const mlbbId = document.getElementById("mlbbId").value;
+  const svId   = document.getElementById("svId").value;
+
+  if (!mlbbId || !svId || cart.length === 0) {
+    alert("Fill ID / SV ID and add items.");
+    return;
+  }
+
+  document.getElementById("step1").classList.add("hidden");
+  document.getElementById("step2").classList.remove("hidden");
+
+  const preview = document.getElementById("preview");
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  preview.innerHTML = `
+    <p><b>MLBB ID:</b> ${mlbbId}</p>
+    <p><b>Server ID:</b> ${svId}</p>
+    <hr class="my-2 opacity-40">
+
+    ${cart.map(i => `
+      <p>${i.amount} × ${i.qty} = ${(i.price*i.qty).toLocaleString()} Ks</p>
+    `).join("")}
+
+    <hr class="my-2 opacity-40">
+    <p class="text-lg"><b>Total:</b> ${total.toLocaleString()} Ks</p>
+  `;
+}
+
+async function submitOrder() {
+  const slip = document.getElementById("slipInput").files[0];
+
+  if (!slip) {
+    alert("Upload slip first!");
+    return;
+  }
+
+  const form = new FormData();
+  form.append("cart", JSON.stringify(cart));
+  form.append("mlbbId", mlbbId.value);
+  form.append("svId", svId.value);
+  form.append("slip", slip);
+
+  const res = await fetch("https://bikastore-api.onrender.com/api/orders/web-order", {
+    method: "POST",
+    body: form
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    alert("Order Submitted! Check Telegram.");
+    window.location.href = "https://t.me/BikaStoreBot";
+  } else {
+    alert("Error submitting order.");
+  }
+}
+</script>
+
 </body>
 </html>
+    
