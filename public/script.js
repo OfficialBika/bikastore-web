@@ -1,46 +1,50 @@
-const gameSelect = document.getElementById("game");
-const mlbbFields = document.getElementById("mlbbFields");
-const pubgFields = document.getElementById("pubgFields");
-const form = document.getElementById("orderForm");
-const result = document.getElementById("result");
+const API_BASE = "https://bikastore-api.onrender.com";
 
-gameSelect.addEventListener("change", () => {
-  mlbbFields.classList.add("hidden");
-  pubgFields.classList.add("hidden");
+// Game change → show / hide fields
+document.getElementById("game").addEventListener("change", () => {
+  const game = document.getElementById("game").value;
 
-  if (gameSelect.value === "MLBB") mlbbFields.classList.remove("hidden");
-  if (gameSelect.value === "PUBG") pubgFields.classList.remove("hidden");
+  document.getElementById("mlbbId").style.display = game === "MLBB" ? "block" : "none";
+  document.getElementById("mlbbServerId").style.display = game === "MLBB" ? "block" : "none";
+  document.getElementById("pubgId").style.display = game === "PUBG" ? "block" : "none";
 });
 
-form.addEventListener("submit", async (e) => {
+// Submit order
+document.getElementById("orderForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const game = document.getElementById("game").value;
+
   const payload = {
-    game: gameSelect.value,
-    mlbbId: document.getElementById("mlbbId").value,
-    mlbbServerId: document.getElementById("mlbbServerId").value,
-    pubgId: document.getElementById("pubgId").value,
-    packageName: document.getElementById("packageName").value,
+    userId: Date.now(), // temp user id
+    username: "web_user",
+    game: game,
+    mlbbId: game === "MLBB" ? document.getElementById("mlbbId").value : null,
+    mlbbServerId: game === "MLBB" ? document.getElementById("mlbbServerId").value : null,
+    pubgId: game === "PUBG" ? document.getElementById("pubgId").value : null,
+    packageName: document.getElementById("package").value,
     price: Number(document.getElementById("price").value),
   };
 
-  const res = await fetch("https://bikastore-api.onrender.com/api/orders", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const res = await fetch(`${API_BASE}/api/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (data.success) {
-    result.classList.remove("hidden");
-    result.innerHTML = `
-      ✅ Order Created Successfully!<br/><br/>
-      👉 Continue in Telegram:<br/>
-      <a href="https://t.me/BikaStoreBot" target="_blank">Open @BikaStoreBot</a>
-    `;
-    form.reset();
-  } else {
-    alert("Order failed");
+    if (data.success) {
+      alert("✅ Order တင်ပြီးပါပြီ! Telegram Bot ထဲသွားပါ");
+      window.location.href = "https://t.me/BikaStoreBot";
+    } else {
+      alert("❌ Order မအောင်မြင်ပါ");
+    }
+  } catch (err) {
+    alert("❌ API ချိတ်ဆက်မရပါ");
+    console.error(err);
   }
 });
