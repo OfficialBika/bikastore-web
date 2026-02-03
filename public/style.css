@@ -1,50 +1,62 @@
 body {
-  font-family: system-ui, sans-serif;
-  background: #020617;
-  color: #e5e7eb;
+  margin: 0;
+  font-family: system-ui;
+  background: radial-gradient(circle at top,#0b102f,#020617);
+  color: #fff;
 }
 
 .container {
   max-width: 420px;
-  margin: 40px auto;
+  margin: auto;
   padding: 20px;
-  background: #0f172a;
-  border-radius: 16px;
 }
 
 h1 {
   text-align: center;
+  margin-bottom: 5px;
+}
+
+.sub {
+  text-align: center;
+  opacity: .7;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,.06);
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 16px;
 }
 
 label {
-  display: block;
-  margin-top: 12px;
-  font-size: 14px;
+  font-size: 13px;
+  opacity: .8;
 }
 
-input, select, button {
+input, select {
   width: 100%;
-  margin-top: 6px;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  margin: 6px 0 12px;
+  border-radius: 12px;
   border: none;
+  background: rgba(255,255,255,.08);
+  color: #fff;
 }
 
 button {
-  margin-top: 16px;
-  background: #6366f1;
-  color: white;
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
   font-weight: bold;
+  background: linear-gradient(135deg,#22c55e,#16a34a);
   cursor: pointer;
 }
 
-.hidden {
-  display: none;
-}
-
-#result {
-  margin-top: 20px;
-  padding: 14px;
-  background: #022c22;
-  border-radius: 10px;
+.total {
+  text-align: right;
+  font-size: 18px;
+  margin-top: 10px;
+  color: #22c55e;
 }
