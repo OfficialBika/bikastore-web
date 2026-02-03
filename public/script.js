@@ -47,4 +47,32 @@ document.getElementById("orderForm").addEventListener("submit", async (e) => {
     alert("❌ API ချိတ်ဆက်မရပါ");
     console.error(err);
   }
+document.getElementById("slipForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const orderId = document.getElementById("orderId").value;
+  const slip = document.getElementById("slip").files[0];
+
+  const formData = new FormData();
+  formData.append("orderId", orderId);
+  formData.append("slip", slip);
+
+  try {
+    const res = await fetch(`${API_BASE}/api/payments/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("✅ Slip ပို့ပြီးပါပြီ! Admin confirm စောင့်ပါ");
+      window.location.href = "https://t.me/BikaStoreBot";
+    } else {
+      alert("❌ Slip upload မအောင်မြင်ပါ");
+    }
+  } catch (err) {
+    alert("❌ Server error");
+    console.error(err);
+  }
 });
