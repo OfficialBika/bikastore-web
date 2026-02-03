@@ -1,227 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>BIKA Store — Multi Order</title>
-
-<style>
-  body {
-    margin: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont;
-    background: radial-gradient(circle at top, #0a0f2c, #020617);
-    color: #fff;
-  }
-
-  .container {
-    max-width: 420px;
-    margin: auto;
-    padding: 20px;
-  }
-
-  h1 {
-    text-align: center;
-    margin-bottom: 5px;
-  }
-
-  .subtitle {
-    text-align: center;
-    opacity: .7;
-    margin-bottom: 20px;
-  }
-
-  .card {
-    background: rgba(255,255,255,0.05);
-    border-radius: 16px;
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-
-  label {
-    font-size: 13px;
-    opacity: .8;
-  }
-
-  select, input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 6px;
-    margin-bottom: 14px;
-    border-radius: 12px;
-    border: none;
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    font-size: 15px;
-  }
-
-  button {
-    width: 100%;
-    padding: 14px;
-    border-radius: 14px;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  .btn-add {
-    background: linear-gradient(135deg,#22c55e,#16a34a);
-    color: #000;
-  }
-
-  .btn-confirm {
-    background: linear-gradient(135deg,#38bdf8,#0284c7);
-    margin-top: 10px;
-  }
-
-  .cart-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 14px;
-  }
-
-  .price {
-    color: #22c55e;
-  }
-
-  .total {
-    font-size: 18px;
-    font-weight: bold;
-    text-align: right;
-    margin-top: 10px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BIKA Store</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
+
 <div class="container">
-
   <h1>🛒 BIKA Store</h1>
-  <div class="subtitle">MLBB • PUBG • Telegram Premium</div>
+  <p class="sub">MLBB • PUBG • Telegram Premium</p>
 
-  <!-- ORDER FORM -->
   <div class="card">
     <label>Game</label>
-    <select id="game">
-      <option value="MLBB">MLBB Diamonds</option>
-      <option value="PUBG">PUBG UC</option>
-    </select>
+    <select id="game"></select>
+
+    <div id="mlbbFields">
+      <label>MLBB ID</label>
+      <input id="mlbbId" placeholder="Enter MLBB ID"/>
+      <label>Server ID</label>
+      <input id="mlbbServer" placeholder="Server ID"/>
+    </div>
+
+    <div id="pubgFields" style="display:none">
+      <label>PUBG ID</label>
+      <input id="pubgId" placeholder="PUBG ID"/>
+    </div>
 
     <label>Package</label>
     <select id="package"></select>
 
     <label>Price (Ks)</label>
     <input id="price" disabled />
-    
-    <button class="btn-add" onclick="addToCart()">➕ Add Order</button>
+
+    <button onclick="addOrder()">➕ Add Order</button>
   </div>
 
-  <!-- CART -->
   <div class="card">
     <h3>🧾 Order List</h3>
-    <div id="cart"></div>
+    <div id="orders"></div>
     <div class="total">Total: <span id="total">0</span> Ks</div>
-    <button class="btn-confirm" onclick="confirmOrder()">✅ Confirm Order</button>
+  </div>
+
+  <div class="card">
+    <h3>💳 Payment</h3>
+    <div>Order ID</div>
+    <input id="orderId" disabled />
+    <input type="file" id="slip"/>
+    <button onclick="submitOrder()">✅ Confirm & Upload Slip</button>
   </div>
 
 </div>
 
-<script>
-const API_BASE = "https://bikastore-api.onrender.com";
-
-const PRICE_LIST = {
-  MLBB: {
-    "11": 800,"22":1600,"33":2350,"55":3600,"86":4800,"112":8200,
-    "172":9800,"257":14500,"343":20000,"429":25000,"514":29900,
-    "600":34500,"706":39900,"792":44500,"878":48500,"963":53000,
-    "1049":59900,"1135":63500,"1412":77000,"1584":88000,"1669":94000,
-    "2195":118900,"3158":172000,"3688":202000,"4390":237000,
-    "5100":280000,"5532":300000,"6055":330000,
-    "wp1":5900,"wp2":11800,"wp3":17700,"wp4":23600,"wp5":29500,
-    "web":3500,"meb":16500
-  },
-  PUBG: {
-    "60":4500,"325":19500,"660":38000,"1800":90500,
-    "3850":185000,"8100":363000,
-    "Prime1m":4500,"Primeplus":39500
-  }
-};
-
-let cart = [];
-
-const gameSelect = document.getElementById("game");
-const packageSelect = document.getElementById("package");
-const priceInput = document.getElementById("price");
-
-function loadPackages() {
-  packageSelect.innerHTML = "";
-  const game = gameSelect.value;
-  Object.keys(PRICE_LIST[game]).forEach(pkg => {
-    const opt = document.createElement("option");
-    opt.value = pkg;
-    opt.textContent = pkg;
-    packageSelect.appendChild(opt);
-  });
-  updatePrice();
-}
-
-function updatePrice() {
-  const game = gameSelect.value;
-  const pkg = packageSelect.value;
-  priceInput.value = PRICE_LIST[game][pkg] || "";
-}
-
-gameSelect.onchange = loadPackages;
-packageSelect.onchange = updatePrice;
-
-function addToCart() {
-  const game = gameSelect.value;
-  const pkg = packageSelect.value;
-  const price = PRICE_LIST[game][pkg];
-
-  cart.push({ game, pkg, price });
-  renderCart();
-}
-
-function renderCart() {
-  const cartDiv = document.getElementById("cart");
-  cartDiv.innerHTML = "";
-  let total = 0;
-
-  cart.forEach(item => {
-    total += item.price;
-    const div = document.createElement("div");
-    div.className = "cart-item";
-    div.innerHTML = `<span>${item.game} - ${item.pkg}</span><span class="price">${item.price} Ks</span>`;
-    cartDiv.appendChild(div);
-  });
-
-  document.getElementById("total").textContent = total;
-}
-
-async function confirmOrder() {
-  if (!cart.length) return alert("No orders added");
-
-  for (const item of cart) {
-    await fetch(`${API_BASE}/api/orders`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: Date.now(),
-        username: "web_user",
-        game: item.game,
-        packageName: item.pkg,
-        price: item.price
-      })
-    });
-  }
-
-  alert("✅ Order Sent! Telegram Bot ထဲသွားပါ");
-  window.location.href = "https://t.me/BikaButtonBot";
-}
-
-loadPackages();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
