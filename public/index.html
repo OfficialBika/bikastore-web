@@ -56,21 +56,48 @@
 
   <!-- STEP 1 — PRICE LIST -->
   <div id="step1">
-    <h2 class="text-xl font-bold mt-5 mb-3">💎 MLBB Diamonds — Select Items</h2>
+    <div class="flex items-center justify-between mt-5 mb-3">
+      <h2 class="text-xl font-bold">🎮 Select Game & Package</h2>
+    </div>
 
+    <!-- GAME TABS -->
+    <div class="flex gap-2 mb-4">
+      <button
+        id="tabMLBB"
+        class="flex-1 py-2 rounded-xl bg-white/20 backdrop-blur shadow-neon font-semibold text-center"
+        onclick="setGame('MLBB')">
+        MLBB
+      </button>
+      <button
+        id="tabPUBG"
+        class="flex-1 py-2 rounded-xl bg-white/5 backdrop-blur font-semibold text-center"
+        onclick="setGame('PUBG')">
+        PUBG
+      </button>
+    </div>
+
+    <!-- DYNAMIC TITLE -->
+    <h2 id="priceTitle" class="text-lg font-semibold mb-2">💎 MLBB Diamonds — Select Items</h2>
+
+    <!-- PRICE LIST -->
     <div id="priceList" class="grid grid-cols-2 gap-3"></div>
 
     <!-- CART -->
     <h2 class="text-xl font-bold mt-6">🛒 Cart</h2>
-    <div id="cartList"></div>
+    <div id="cartList" class="mt-2"></div>
 
-    <!-- MLBB ID FORM -->
-    <div class="mt-6">
+    <!-- GAME ID FORMS -->
+    <div class="mt-6" id="mlbbFields">
       <label class="block mb-1">MLBB ID</label>
-      <input id="mlbbId" class="w-full p-3 bg-glass rounded-xl backdrop-blur shadow-glow">
+      <input id="mlbbId" class="w-full p-3 bg-glass rounded-xl backdrop-blur shadow-glow" />
 
       <label class="block mt-4 mb-1">Server ID</label>
-      <input id="svId" class="w-full p-3 bg-glass rounded-xl backdrop-blur shadow-glow">
+      <input id="svId" class="w-full p-3 bg-glass rounded-xl backdrop-blur shadow-glow" />
+    </div>
+
+    <div class="mt-6 hidden" id="pubgFields">
+      <label class="block mb-1">PUBG ID</label>
+      <input id="pubgId" class="w-full p-3 bg-glass rounded-xl backdrop-blur shadow-glow" />
     </div>
 
     <!-- NEXT BUTTON -->
@@ -87,14 +114,21 @@
 
     <h3 class="text-lg mt-6 mb-2 font-semibold">💵 Payment Methods</h3>
 
-    <div class="p-4 bg-glass rounded-xl backdrop-blur shadow-glow">
-      <p>KPay – 09xxxxxxx</p>
-      <p>WavePay – 09xxxxxxx</p>
+    <div class="p-4 bg-glass rounded-xl backdrop-blur shadow-glow space-y-1 text-sm">
+      <p><span class="font-semibold">KPay</span></p>
+      <p>Name : Shine Htet Aung</p>
+      <p>Phone: 09264202637</p>
+
+      <hr class="my-2 opacity-30">
+
+      <p><span class="font-semibold">WavePay</span></p>
+      <p>Name : Shine Htet Aung</p>
+      <p>Phone: 09264202637</p>
     </div>
 
     <h3 class="text-lg mt-6 mb-2 font-semibold">📸 Upload Slip</h3>
     <input id="slipInput" type="file" accept="image/*"
-      class="w-full p-3 bg-glass rounded-xl shadow-glow">
+      class="w-full p-3 bg-glass rounded-xl shadow-glow" />
 
     <button onclick="submitOrder()"
       class="w-full mt-6 py-3 bg-gradient-to-r from-primary to-secondary rounded-xl shadow-neon">
@@ -104,86 +138,200 @@
 
 </div>
 
-  <script>
-/* PRICE DATA */
-const prices = [
-  { amount: 11, price: 800 },
-  { amount: 22, price: 1600 },
-  { amount: 33, price: 2350 },
-  { amount: 55, price: 3600 },
-  { amount: 86, price: 4800 },
-  { amount: 112, price: 8200 },
-  { amount: 172, price: 9800 },
-  { amount: 257, price: 14500 },
-  { amount: 343, price: 20000 },
-  { amount: 429, price: 25000 },
-  { amount: 514, price: 29900 },
-  { amount: 600, price: 34500 },
-  { amount: 706, price: 39900 },
-  { amount: 792, price: 44500 },
-  { amount: 878, price: 48500 },
-  { amount: 963, price: 53000 },
-  { amount: 1049, price: 59900 },
-  { amount: 1135, price: 63500 },
-  { amount: 1412, price: 77000 },
-  { amount: 1584, price: 88000 },
-  { amount: 1669, price: 94000 },
-  { amount: 2195, price: 118900 },
-  { amount: 3158, price: 172000 },
-  { amount: 3688, price: 202000 },
-  { amount: 4390, price: 237000 },
-  { amount: 5100, price: 280000 },
-  { amount: 5532, price: 300000 },
-  { amount: 6055, price: 330000 }
+<script>
+/* ===========================
+   PRICE DATA (ALL PACKAGES)
+   =========================== */
+
+// Combined products list (MLBB + PUBG)
+const PRODUCTS = [
+  // MLBB Diamonds
+  { id: "mlbb_11",   game: "MLBB", category: "diamond", label: "11 Diamonds",   price: 800 },
+  { id: "mlbb_22",   game: "MLBB", category: "diamond", label: "22 Diamonds",   price: 1600 },
+  { id: "mlbb_33",   game: "MLBB", category: "diamond", label: "33 Diamonds",   price: 2350 },
+  { id: "mlbb_55",   game: "MLBB", category: "diamond", label: "55 Diamonds",   price: 3600 },
+  { id: "mlbb_86",   game: "MLBB", category: "diamond", label: "86 Diamonds",   price: 4800 },
+  { id: "mlbb_112",  game: "MLBB", category: "diamond", label: "112 Diamonds",  price: 8200 },
+  { id: "mlbb_172",  game: "MLBB", category: "diamond", label: "172 Diamonds",  price: 9800 },
+  { id: "mlbb_257",  game: "MLBB", category: "diamond", label: "257 Diamonds",  price: 14500 },
+  { id: "mlbb_343",  game: "MLBB", category: "diamond", label: "343 Diamonds",  price: 20000 },
+  { id: "mlbb_429",  game: "MLBB", category: "diamond", label: "429 Diamonds",  price: 25000 },
+  { id: "mlbb_514",  game: "MLBB", category: "diamond", label: "514 Diamonds",  price: 29900 },
+  { id: "mlbb_600",  game: "MLBB", category: "diamond", label: "600 Diamonds",  price: 34500 },
+  { id: "mlbb_706",  game: "MLBB", category: "diamond", label: "706 Diamonds",  price: 39900 },
+  { id: "mlbb_792",  game: "MLBB", category: "diamond", label: "792 Diamonds",  price: 44500 },
+  { id: "mlbb_878",  game: "MLBB", category: "diamond", label: "878 Diamonds",  price: 48500 },
+  { id: "mlbb_963",  game: "MLBB", category: "diamond", label: "963 Diamonds",  price: 53000 },
+  { id: "mlbb_1049", game: "MLBB", category: "diamond", label: "1049 Diamonds", price: 59900 },
+  { id: "mlbb_1135", game: "MLBB", category: "diamond", label: "1135 Diamonds", price: 63500 },
+  { id: "mlbb_1412", game: "MLBB", category: "diamond", label: "1412 Diamonds", price: 77000 },
+  { id: "mlbb_1584", game: "MLBB", category: "diamond", label: "1584 Diamonds", price: 88000 },
+  { id: "mlbb_1669", game: "MLBB", category: "diamond", label: "1669 Diamonds", price: 94000 },
+  { id: "mlbb_2195", game: "MLBB", category: "diamond", label: "2195 Diamonds", price: 118900 },
+  { id: "mlbb_3158", game: "MLBB", category: "diamond", label: "3158 Diamonds", price: 172000 },
+  { id: "mlbb_3688", game: "MLBB", category: "diamond", label: "3688 Diamonds", price: 202000 },
+  { id: "mlbb_4390", game: "MLBB", category: "diamond", label: "4390 Diamonds", price: 237000 },
+  { id: "mlbb_5100", game: "MLBB", category: "diamond", label: "5100 Diamonds", price: 280000 },
+  { id: "mlbb_5532", game: "MLBB", category: "diamond", label: "5532 Diamonds", price: 300000 },
+  { id: "mlbb_6055", game: "MLBB", category: "diamond", label: "6055 Diamonds", price: 330000 },
+
+  // MLBB Specials (Weekly, Web, MEB)
+  { id: "mlbb_wp1", game: "MLBB", category: "special", label: "Weekly Pass 1 (wp1)", price: 5900 },
+  { id: "mlbb_wp2", game: "MLBB", category: "special", label: "Weekly Pass 2 (wp2)", price: 11800 },
+  { id: "mlbb_wp3", game: "MLBB", category: "special", label: "Weekly Pass 3 (wp3)", price: 17700 },
+  { id: "mlbb_wp4", game: "MLBB", category: "special", label: "Weekly Pass 4 (wp4)", price: 23600 },
+  { id: "mlbb_wp5", game: "MLBB", category: "special", label: "Weekly Pass 5 (wp5)", price: 29500 },
+  { id: "mlbb_web", game: "MLBB", category: "special", label: "WEB",              price: 3500 },
+  { id: "mlbb_meb", game: "MLBB", category: "special", label: "MEB",              price: 16500 },
+
+  // PUBG UC
+  { id: "pubg_60",   game: "PUBG", category: "uc",    label: "60 UC",   price: 4500 },
+  { id: "pubg_325",  game: "PUBG", category: "uc",    label: "325 UC",  price: 19500 },
+  { id: "pubg_660",  game: "PUBG", category: "uc",    label: "660 UC",  price: 38000 },
+  { id: "pubg_1800", game: "PUBG", category: "uc",    label: "1800 UC", price: 90500 },
+  { id: "pubg_3850", game: "PUBG", category: "uc",    label: "3850 UC", price: 185000 },
+  { id: "pubg_8100", game: "PUBG", category: "uc",    label: "8100 UC", price: 363000 },
+
+  // PUBG Prime
+  { id: "pubg_prime1m",  game: "PUBG", category: "prime", label: "Prime 1 Month", price: 4500 },
+  { id: "pubg_primeplus", game: "PUBG", category: "prime", label: "Prime Plus",   price: 39500 }
 ];
+
+// Helpers
+function filterProducts(game, category) {
+  return PRODUCTS.filter(p => p.game === game && p.category === category);
+}
 
 /* CART */
 let cart = [];
+let currentGame = "MLBB";
 
+/* RENDER PRICE LIST */
 function renderPrices() {
   const box = document.getElementById("priceList");
+  const title = document.getElementById("priceTitle");
+
   box.innerHTML = "";
 
-  prices.forEach((item, i) => {
+  if (currentGame === "MLBB") {
+    title.textContent = "💎 MLBB Diamonds — Select Items";
+
+    const diamonds = filterProducts("MLBB", "diamond");
+    const specials = filterProducts("MLBB", "special");
+
     box.innerHTML += `
-      <div class="p-3 bg-glass rounded-xl backdrop-blur shadow-glow">
-        <p class="font-semibold">${item.amount} Diamonds</p>
-        <p class="opacity-75">${item.price.toLocaleString()} Ks</p>
-        <button onclick="addToCart(${i})"
-          class="mt-2 w-full bg-gradient-to-r from-primary to-secondary py-1 rounded-xl shadow-neon">
-          + Add
-        </button>
-      </div>
+      <h3 class="col-span-2 text-xs uppercase tracking-wide opacity-60">Diamonds</h3>
     `;
-  });
+    diamonds.forEach((item, i) => {
+      box.innerHTML += productCardHTML(item);
+    });
+
+    box.innerHTML += `
+      <h3 class="col-span-2 mt-3 text-xs uppercase tracking-wide opacity-60">Weekly / Web / MEB</h3>
+    `;
+    specials.forEach((item, i) => {
+      box.innerHTML += productCardHTML(item);
+    });
+
+    document.getElementById("mlbbFields").classList.remove("hidden");
+    document.getElementById("pubgFields").classList.add("hidden");
+  } else {
+    title.textContent = "🥤 PUBG UC — Select Items";
+
+    const ucs = filterProducts("PUBG", "uc");
+    const primes = filterProducts("PUBG", "prime");
+
+    box.innerHTML += `
+      <h3 class="col-span-2 text-xs uppercase tracking-wide opacity-60">UC Packages</h3>
+    `;
+    ucs.forEach((item, i) => {
+      box.innerHTML += productCardHTML(item);
+    });
+
+    box.innerHTML += `
+      <h3 class="col-span-2 mt-3 text-xs uppercase tracking-wide opacity-60">Prime</h3>
+    `;
+    primes.forEach((item, i) => {
+      box.innerHTML += productCardHTML(item);
+    });
+
+    document.getElementById("mlbbFields").classList.add("hidden");
+    document.getElementById("pubgFields").classList.remove("hidden");
+  }
 }
 
-function addToCart(i) {
-  const item = prices[i];
-  const exists = cart.find(c => c.amount === item.amount);
+/* PRODUCT CARD TEMPLATE */
+function productCardHTML(item) {
+  return `
+    <div class="p-3 bg-glass rounded-xl backdrop-blur shadow-glow">
+      <p class="font-semibold">${item.label}</p>
+      <p class="opacity-75 text-sm">${item.price.toLocaleString()} Ks</p>
+      <button onclick="addToCart('${item.id}')"
+        class="mt-2 w-full bg-gradient-to-r from-primary to-secondary py-1 rounded-xl shadow-neon text-sm">
+        + Add
+      </button>
+    </div>
+  `;
+}
 
-  if (exists) exists.qty++;
-  else cart.push({ ...item, qty: 1 });
+/* ADD TO CART */
+function addToCart(productId) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  if (!product) return;
+
+  const exists = cart.find(c => c.id === product.id);
+
+  if (exists) {
+    exists.qty++;
+  } else {
+    cart.push({
+      id: product.id,
+      game: product.game,
+      label: product.label,
+      price: product.price,
+      qty: 1
+    });
+  }
 
   renderCart();
 }
 
+/* RENDER CART */
 function renderCart() {
   const box = document.getElementById("cartList");
   box.innerHTML = "";
 
+  if (cart.length === 0) {
+    box.innerHTML = `<p class="text-sm opacity-70 mt-1">Cart is empty. Please add some items.</p>`;
+    return;
+  }
+
   cart.forEach((item, i) => {
+    const lineTotal = item.price * item.qty;
     box.innerHTML += `
       <div class="p-3 bg-glass rounded-xl backdrop-blur shadow-glow mt-2">
-        <p>${item.amount} Diamonds</p>
-        <div class="flex gap-3 mt-1 items-center">
-          <button class="px-3 bg-gray-700 rounded" onclick="dec(${i})">-</button>
-          <p>${item.qty}</p>
-          <button class="px-3 bg-gray-700 rounded" onclick="inc(${i})">+</button>
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="font-semibold text-sm">${item.game} — ${item.label}</p>
+            <p class="text-xs opacity-70">${item.price.toLocaleString()} Ks × ${item.qty} = ${lineTotal.toLocaleString()} Ks</p>
+          </div>
+          <div class="flex gap-2 items-center">
+            <button class="px-3 bg-gray-700 rounded" onclick="dec(${i})">-</button>
+            <p>${item.qty}</p>
+            <button class="px-3 bg-gray-700 rounded" onclick="inc(${i})">+</button>
+          </div>
         </div>
       </div>
     `;
   });
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  box.innerHTML += `
+    <div class="mt-3 text-right text-sm">
+      <span class="opacity-80">Total:</span>
+      <span class="font-semibold">${total.toLocaleString()} Ks</span>
+    </div>
+  `;
 }
 
 function inc(i) {
@@ -197,67 +345,137 @@ function dec(i) {
   renderCart();
 }
 
-renderPrices();
-function goStep2() {
-  const mlbbId = document.getElementById("mlbbId").value;
-  const svId   = document.getElementById("svId").value;
+/* GAME TAB SWITCH */
+function setGame(game) {
+  currentGame = game;
+  renderPrices();
+  updateGameTabs();
+}
 
-  if (!mlbbId || !svId || cart.length === 0) {
-    alert("Fill ID / SV ID and add items.");
+function updateGameTabs() {
+  const tabMLBB = document.getElementById("tabMLBB");
+  const tabPUBG = document.getElementById("tabPUBG");
+
+  if (currentGame === "MLBB") {
+    tabMLBB.classList.add("bg-white/20", "shadow-neon");
+    tabMLBB.classList.remove("bg-white/5");
+    tabPUBG.classList.remove("bg-white/20", "shadow-neon");
+    tabPUBG.classList.add("bg-white/5");
+  } else {
+    tabPUBG.classList.add("bg-white/20", "shadow-neon");
+    tabPUBG.classList.remove("bg-white/5");
+    tabMLBB.classList.remove("bg-white/20", "shadow-neon");
+    tabMLBB.classList.add("bg-white/5");
+  }
+}
+
+/* STEP SWITCH */
+function goStep2() {
+  const mlbbIdVal = document.getElementById("mlbbId").value.trim();
+  const svIdVal   = document.getElementById("svId").value.trim();
+  const pubgIdVal = document.getElementById("pubgId").value.trim();
+
+  if (cart.length === 0) {
+    alert("Please add at least one item to cart.");
     return;
+  }
+
+  if (currentGame === "MLBB") {
+    if (!mlbbIdVal || !svIdVal) {
+      alert("Please fill MLBB ID and Server ID.");
+      return;
+    }
+  } else {
+    if (!pubgIdVal) {
+      alert("Please fill PUBG ID.");
+      return;
+    }
   }
 
   document.getElementById("step1").classList.add("hidden");
   document.getElementById("step2").classList.remove("hidden");
 
   const preview = document.getElementById("preview");
-
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
+  let idPart = "";
+  if (currentGame === "MLBB") {
+    idPart = `
+      <p><b>MLBB ID:</b> ${mlbbIdVal}</p>
+      <p><b>Server ID:</b> ${svIdVal}</p>
+    `;
+  } else {
+    idPart = `<p><b>PUBG ID:</b> ${pubgIdVal}</p>`;
+  }
+
+  const itemsHTML = cart.map(i => `
+    <p class="text-sm">
+      ${i.game} — ${i.label} × ${i.qty}
+      = ${(i.price * i.qty).toLocaleString()} Ks
+    </p>
+  `).join("");
+
   preview.innerHTML = `
-    <p><b>MLBB ID:</b> ${mlbbId}</p>
-    <p><b>Server ID:</b> ${svId}</p>
+    <p><b>Game:</b> ${currentGame}</p>
+    ${idPart}
     <hr class="my-2 opacity-40">
-
-    ${cart.map(i => `
-      <p>${i.amount} × ${i.qty} = ${(i.price*i.qty).toLocaleString()} Ks</p>
-    `).join("")}
-
+    ${itemsHTML}
     <hr class="my-2 opacity-40">
     <p class="text-lg"><b>Total:</b> ${total.toLocaleString()} Ks</p>
   `;
 }
 
+/* SUBMIT ORDER */
 async function submitOrder() {
   const slip = document.getElementById("slipInput").files[0];
 
   if (!slip) {
-    alert("Upload slip first!");
+    alert("Upload payment slip first!");
     return;
   }
 
+  const mlbbIdVal = document.getElementById("mlbbId").value.trim();
+  const svIdVal   = document.getElementById("svId").value.trim();
+  const pubgIdVal = document.getElementById("pubgId").value.trim();
+
   const form = new FormData();
+  form.append("game", currentGame);
   form.append("cart", JSON.stringify(cart));
-  form.append("mlbbId", mlbbId.value);
-  form.append("svId", svId.value);
+
+  if (currentGame === "MLBB") {
+    form.append("mlbbId", mlbbIdVal);
+    form.append("svId", svIdVal);
+  } else {
+    form.append("pubgId", pubgIdVal);
+  }
+
   form.append("slip", slip);
 
-  const res = await fetch("https://bikastore-api.onrender.com/api/orders/web-order", {
-    method: "POST",
-    body: form
-  });
+  try {
+    const res = await fetch("https://bikastore-api.onrender.com/api/orders/web-order", {
+      method: "POST",
+      body: form
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (data.success) {
-    alert("Order Submitted! Check Telegram.");
-    window.location.href = "https://t.me/BikaStoreBot";
-  } else {
-    alert("Error submitting order.");
+    if (data.success) {
+      alert("Order Submitted! Check Telegram.");
+      window.location.href = "https://t.me/BikaStoreBot";
+    } else {
+      alert("Error submitting order.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Network error. Please try again.");
   }
 }
+
+/* INIT */
+renderPrices();
+renderCart();
+updateGameTabs();
 </script>
 
 </body>
 </html>
-    
