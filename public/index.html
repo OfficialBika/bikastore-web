@@ -2,44 +2,162 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>BIKA Store – Web Order</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BIKA Store – Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+    }
+
+    body {
+      margin: 0;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 16px;
+    }
+
+    .card {
+      max-width: 420px;
+      margin: auto;
+      background: #020617;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.6);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    label {
+      font-size: 13px;
+      color: #cbd5f5;
+      margin-top: 14px;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #1e293b;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 15px;
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .row input {
+      flex: 1;
+    }
+
+    .btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(135deg,#22c55e,#16a34a);
+      color: #022c22;
+    }
+
+    .btn.secondary {
+      background: linear-gradient(135deg,#38bdf8,#0ea5e9);
+      color: #022c22;
+    }
+
+    .divider {
+      margin: 22px 0;
+      height: 1px;
+      background: #1e293b;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 14px;
+      color: #94a3b8;
+    }
+  </style>
 </head>
+
 <body>
 
-  <h2>🛒 BIKA Store – Web Order</h2>
+  <div class="card">
+    <h1>🛒 BIKA Store</h1>
+    <div class="subtitle">MLBB • PUBG • Telegram Premium</div>
 
-  <form id="orderForm">
-    <label>Game</label><br/>
-    <select id="game" required>
-      <option value="">Select Game</option>
-      <option value="MLBB">MLBB</option>
-      <option value="PUBG">PUBG</option>
-    </select>
-    <br/><br/>
-    <hr/>
+    <!-- ORDER FORM -->
+    <form id="orderForm">
 
-<h3>📸 Upload Payment Slip</h3>
+      <label>Game</label>
+      <select id="game">
+        <option value="MLBB">MLBB Diamonds</option>
+        <option value="PUBG">PUBG UC</option>
+      </select>
 
-<form id="slipForm">
-  <input type="number" id="orderId" placeholder="Order ID" required />
-  <input type="file" id="slip" accept="image/*" required />
-  <button type="submit">Upload Slip</button>
-</form>
+      <div id="mlbbFields">
+        <label>MLBB ID & Server</label>
+        <div class="row">
+          <input id="mlbbId" placeholder="Player ID" />
+          <input id="mlbbServerId" placeholder="Server" />
+        </div>
+      </div>
 
-    <!-- MLBB -->
-    <input id="mlbbId" placeholder="MLBB ID" /><br/>
-    <input id="mlbbServerId" placeholder="Server ID" /><br/><br/>
+      <div id="pubgFields" style="display:none;">
+        <label>PUBG ID</label>
+        <input id="pubgId" placeholder="PUBG Player ID" />
+      </div>
 
-    <!-- PUBG -->
-    <input id="pubgId" placeholder="PUBG ID" /><br/><br/>
+      <label>Package</label>
+      <input id="package" placeholder="e.g. 86 Diamonds" />
 
-    <input id="package" placeholder="Package Name" required /><br/>
-    <input id="price" placeholder="Price (Ks)" type="number" required /><br/><br/>
+      <label>Price (Ks)</label>
+      <input id="price" type="number" placeholder="5000" />
 
-    <button type="submit">✅ Confirm Order</button>
-  </form>
+      <button class="btn">✅ Confirm Order</button>
+    </form>
 
-  <script src="script.js"></script>
+    <div class="divider"></div>
+
+    <!-- SLIP UPLOAD -->
+    <form id="slipForm">
+      <label>Order ID</label>
+      <input id="orderId" placeholder="Order ID from bot" />
+
+      <label>Payment Slip</label>
+      <input type="file" id="slip" accept="image/*" />
+
+      <button class="btn secondary">📸 Upload Slip</button>
+    </form>
+
+    <div class="footer">
+      Admin confirm ပြီးရင် Telegram မှာ အကြောင်းကြားပါမယ်
+    </div>
+  </div>
+
+<script src="script.js"></script>
 </body>
 </html>
