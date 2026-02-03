@@ -1,78 +1,57 @@
 const API_BASE = "https://bikastore-api.onrender.com";
 
-// Game change → show / hide fields
-document.getElementById("game").addEventListener("change", () => {
-  const game = document.getElementById("game").value;
+const gameSelect = document.getElementById("game");
+const mlbbFields = document.getElementById("mlbbFields");
+const pubgFields = document.getElementById("pubgFields");
 
-  document.getElementById("mlbbId").style.display = game === "MLBB" ? "block" : "none";
-  document.getElementById("mlbbServerId").style.display = game === "MLBB" ? "block" : "none";
-  document.getElementById("pubgId").style.display = game === "PUBG" ? "block" : "none";
+gameSelect.addEventListener("change", () => {
+  if (gameSelect.value === "MLBB") {
+    mlbbFields.style.display = "block";
+    pubgFields.style.display = "none";
+  } else {
+    mlbbFields.style.display = "none";
+    pubgFields.style.display = "block";
+  }
 });
 
-// Submit order
+// ORDER
 document.getElementById("orderForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const game = document.getElementById("game").value;
-
   const payload = {
-    userId: Date.now(), // temp user id
+    userId: Date.now(),
     username: "web_user",
-    game: game,
-    mlbbId: game === "MLBB" ? document.getElementById("mlbbId").value : null,
-    mlbbServerId: game === "MLBB" ? document.getElementById("mlbbServerId").value : null,
-    pubgId: game === "PUBG" ? document.getElementById("pubgId").value : null,
+    game: gameSelect.value,
+    mlbbId: document.getElementById("mlbbId").value,
+    mlbbServerId: document.getElementById("mlbbServerId").value,
+    pubgId: document.getElementById("pubgId").value,
     packageName: document.getElementById("package").value,
     price: Number(document.getElementById("price").value),
   };
 
-  try {
-    const res = await fetch(`${API_BASE}/api/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+  const res = await fetch(`${API_BASE}/api/orders`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
-    const data = await res.json();
+  const data = await res.json();
+  alert(data.success ? "✅ Order Success! Bot ထဲသွားပါ" : "❌ Order Failed");
+});
 
-    if (data.success) {
-      alert("✅ Order တင်ပြီးပါပြီ! Telegram Bot ထဲသွားပါ");
-      window.location.href = "https://t.me/BikaStoreBot";
-    } else {
-      alert("❌ Order မအောင်မြင်ပါ");
-    }
-  } catch (err) {
-    alert("❌ API ချိတ်ဆက်မရပါ");
-    console.error(err);
-  }
+// SLIP
 document.getElementById("slipForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const orderId = document.getElementById("orderId").value;
-  const slip = document.getElementById("slip").files[0];
-
   const formData = new FormData();
-  formData.append("orderId", orderId);
-  formData.append("slip", slip);
+  formData.append("orderId", document.getElementById("orderId").value);
+  formData.append("slip", document.getElementById("slip").files[0]);
 
-  try {
-    const res = await fetch(`${API_BASE}/api/payments/upload`, {
-      method: "POST",
-      body: formData,
-    });
+  const res = await fetch(`${API_BASE}/api/payments/upload`, {
+    method: "POST",
+    body: formData,
+  });
 
-    const data = await res.json();
-
-    if (data.success) {
-      alert("✅ Slip ပို့ပြီးပါပြီ! Admin confirm စောင့်ပါ");
-      window.location.href = "https://t.me/BikaStoreBot";
-    } else {
-      alert("❌ Slip upload မအောင်မြင်ပါ");
-    }
-  } catch (err) {
-    alert("❌ Server error");
-    console.error(err);
-  }
+  const data = await res.json();
+  alert(data.success ? "📸 Slip Uploaded!" : "❌ Upload Failed");
 });
