@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8" />
+  <title>BIKA STORE – Web Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="container">
+  <h1>🛍 BIKA STORE – Web Order</h1>
+
+  <form id="orderForm">
+    <!-- Game -->
+    <label>Game</label>
+    <select id="game" required>
+      <option value="">Select Game</option>
+      <option value="MLBB">MLBB Diamonds</option>
+      <option value="PUBG">PUBG UC</option>
+    </select>
+
+    <!-- MLBB -->
+    <div id="mlbbFields" class="hidden">
+      <label>MLBB ID</label>
+      <input type="text" id="mlbbId" />
+
+      <label>Server ID</label>
+      <input type="text" id="mlbbServerId" />
+    </div>
+
+    <!-- PUBG -->
+    <div id="pubgFields" class="hidden">
+      <label>PUBG ID</label>
+      <input type="text" id="pubgId" />
+    </div>
+
+    <!-- Package -->
+    <label>Package</label>
+    <input type="text" id="packageName" placeholder="e.g. 86 Diamonds" required />
+
+    <label>Total Price (Ks)</label>
+    <input type="number" id="price" required />
+
+    <button type="submit">✅ Confirm Order</button>
+  </form>
+
+  <div id="result" class="hidden"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
