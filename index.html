@@ -709,11 +709,11 @@ async function confirmOrderAndOpenBot() {
   }
 
   try {
-    const res = await fetch(API_BASE + "/api/orders/web-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    const res = await fetch(API_BASE + "/api/webOrders", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+});
 
     const data = await res.json();
     if (!data.success) {
